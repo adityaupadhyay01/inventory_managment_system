@@ -3,14 +3,28 @@ import { getData, saveData } from "../../utils/database.js";
 export function sellProduct(name) {
     const data = getData();
 
-    const product = data.find(p => p.name === name);
+    const product = data.find(
+        p => p.name.toLowerCase() === name.toLowerCase()
+    );
 
-    if (product && product.quantity > 0) {
-        product.quantity -= 1;
-        product.sold += 1;
+    if (!product) {
+        alert("Product not found");
+        return;
     }
 
+    if (product.quantity <= 0) {
+        alert("Out of stock");
+        return;
+    }
+
+    product.quantity -= 1;
+    product.sold += 1;
+
     saveData(data);
+}
+
+export function getAllProducts() {
+    return getData();
 }
 
 export function getExpiryProducts() {

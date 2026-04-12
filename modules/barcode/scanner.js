@@ -1,6 +1,50 @@
+import { addToCart } from "../inventory/inventory.js";
+
 let scanner = null;
 
-// 🔥 API FETCH FUNCTION
+
+// ================= COMMON SCANNER START =================
+function startScanner(callback) {
+    const readerId = "reader";
+
+    // stop previous scanner if running
+    if (scanner) {
+        scanner.stop().then(() => scanner.clear()).catch(() => {});
+    }
+
+    scanner = new Html5Qrcode(readerId);
+
+    scanner.start(
+        { facingMode: "environment" },
+        {
+            fps: 15,
+            qrbox: 250
+        },
+        callback,
+        (error) => {
+            // ignore scan errors (normal behavior)
+        }
+    ).catch(err => {
+        console.error("Scanner error:", err);
+        alert("Camera error / permission issue");
+    });
+}
+
+
+// ================= STOP SCANNER =================
+export function stopScanner() {
+    if (scanner) {
+        scanner.stop()
+            .then(() => {
+                scanner.clear();
+                scanner = null;
+            })
+            .catch(() => {});
+    }
+}
+
+
+// ================= ADD PRODUCT SCANNER =================
 async function fetchProductDetails(barcode) {
     try {
         const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
@@ -15,98 +59,39 @@ async function fetchProductDetails(barcode) {
                 nameInput.value = product.product_name || "";
             }
 
-            console.log("Product Found:", product.product_name);
-        } else {
-            console.log("Product not found in API");
+            console.log("Auto-filled:", product.product_name);
         }
     } catch (err) {
-        console.error("API error:", err);
+        console.log("API error:", err);
     }
 }
 
-// 🔥 ADD SCANNER
 export function startScannerForAdd() {
+    startScanner(async (decodedText) => {
+        console.log("Scanned (ADD):", decodedText);
 
-    const readerId = "reader";
+        const barcodeInput = document.getElementById("barcode");
 
-    if (scanner) {
-        scanner.stop().then(() => {
-            scanner.clear();
-        }).catch(() => {});
-    }
-
-    scanner = new Html5Qrcode(readerId);
-
-    scanner.start(
-        { facingMode: "environment" },
-        {
-            fps: 15,
-            qrbox: 250
-        },
-        async (decodedText) => {
-            console.log("Scanned:", decodedText);
-
-            const barcodeInput = document.getElementById("barcode");
-
-            if (barcodeInput) {
-                barcodeInput.value = decodedText;
-            }
-
-            // 🔥 AUTO FETCH PRODUCT
-            await fetchProductDetails(decodedText);
-
-            stopScanner();
+        if (barcodeInput) {
+            barcodeInput.value = decodedText;
         }
-    ).catch(err => {
-        console.error("Scanner error:", err);
-        alert("Camera not working. Check permissions.");
+
+        await fetchProductDetails(decodedText);
+
+        stopScanner(); // single scan for add
     });
 }
 
-// 🔥 STOP FUNCTION
-export function stopScanner() {
-    if (scanner) {
-        scanner.stop()
-            .then(() => {
-                scanner.clear();
-                scanner = null;
-            })
-            .catch(err => console.log("Stop error:", err));
-    }
-}
 
-// 🔥 SELL SCANNER
+// ================= SELL SCANNER (CART MODE) =================
 export function startScannerForSell() {
+    startScanner((decodedText) => {
+        console.log("Scanned (SELL):", decodedText);
 
-    const readerId = "reader";
+        addToCart(decodedText);
 
-    if (scanner) {
-        scanner.stop().then(() => {
-            scanner.clear();
-        }).catch(() => {});
-    }
+        alert("Added to cart ✅");
 
-    scanner = new Html5Qrcode(readerId);
-
-    scanner.start(
-        { facingMode: "environment" },
-        {
-            fps: 15,
-            qrbox: 250
-        },
-        (decodedText) => {
-            console.log("Scanned:", decodedText);
-
-            const input = document.getElementById("sellBarcode");
-
-            if (input) {
-                input.value = decodedText;
-            }
-
-            stopScanner();
-        }
-    ).catch(err => {
-        console.error("Scanner error:", err);
-        alert("Camera not working");
+        // 🔥 DON'T STOP → allow multiple scans
     });
 }

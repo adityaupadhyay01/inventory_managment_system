@@ -1,32 +1,13 @@
 import { getData, saveData } from "../../utils/database.js";
 
-export function sellProduct(name) {
-    const data = getData();
+let cart = [];
 
-    const product = data.find(
-        p => p.name.toLowerCase() === name.toLowerCase()
-    );
-
-    if (!product) {
-        alert("Product not found");
-        return;
-    }
-
-    if (product.quantity <= 0) {
-        alert("Out of stock");
-        return;
-    }
-
-    product.quantity -= 1;
-    product.sold += 1;
-
-    saveData(data);
-}
-
+// ================= GET INVENTORY =================
 export function getAllProducts() {
     return getData();
 }
 
+// ================= EXPIRY =================
 export function getExpiryProducts() {
     const data = getData();
     const today = new Date();
@@ -38,7 +19,8 @@ export function getExpiryProducts() {
     });
 }
 
-export function sellProductByBarcode(barcode) {
+// ================= CART =================
+export function addToCart(barcode) {
     const data = getData();
 
     const product = data.find(p => p.barcode === barcode);
@@ -48,13 +30,37 @@ export function sellProductByBarcode(barcode) {
         return;
     }
 
-    if (product.quantity <= 0) {
-        alert("Out of stock");
-        return;
+    const existing = cart.find(item => item.barcode === barcode);
+
+    if (existing) {
+        existing.qty += 1;
+    } else {
+        cart.push({ ...product, qty: 1 });
     }
 
-    product.quantity -= 1;
-    product.sold += 1;
+    console.log("Cart:", cart);
+}
+
+// ================= GET CART =================
+export function getCart() {
+    return cart;
+}
+
+// ================= CHECKOUT =================
+export function checkout() {
+    const data = getData();
+
+    cart.forEach(item => {
+        const product = data.find(p => p.barcode === item.barcode);
+
+        if (product && product.quantity >= item.qty) {
+            product.quantity -= item.qty;
+            product.sold += item.qty;
+        }
+    });
 
     saveData(data);
+    cart = [];
+
+    alert("Checkout Done ✅");
 }

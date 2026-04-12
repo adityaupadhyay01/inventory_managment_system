@@ -26,7 +26,6 @@ export function showInventoryUI() {
     container.innerHTML = html;
 }
 
-// ADD THIS
 export function sellProductUI() {
     const container = getContainer();
 
@@ -43,7 +42,6 @@ export function sellProductUI() {
     });
 }
 
-//  ADD THIS
 export function showExpiryUI() {
     const container = getContainer();
     const items = getExpiryProducts();

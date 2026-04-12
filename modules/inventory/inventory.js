@@ -37,3 +37,24 @@ export function getExpiryProducts() {
         return diff <= 7;
     });
 }
+
+export function sellProductByBarcode(barcode) {
+    const data = getData();
+
+    const product = data.find(p => p.barcode === barcode);
+
+    if (!product) {
+        alert("Product not found");
+        return;
+    }
+
+    if (product.quantity <= 0) {
+        alert("Out of stock");
+        return;
+    }
+
+    product.quantity -= 1;
+    product.sold += 1;
+
+    saveData(data);
+}

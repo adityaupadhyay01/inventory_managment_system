@@ -1,12 +1,12 @@
 import { getData, saveData } from "../../utils/database.js";
-import { generateId } from "../../utils/helpers.js";
 
-export function addProduct(name, quantity, expiry) {
+export function addProduct(name, barcode, quantity, expiry) {
     const data = getData();
 
     const product = {
-        id: generateId(),
+        id: Date.now(),
         name,
+        barcode,
         quantity: Number(quantity),
         expiry,
         sold: 0
@@ -14,4 +14,6 @@ export function addProduct(name, quantity, expiry) {
 
     data.push(product);
     saveData(data);
+
+    console.log("DATA SAVED:", data);
 }

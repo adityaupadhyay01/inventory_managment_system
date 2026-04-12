@@ -1,22 +1,49 @@
 import { addProduct } from "./product.js";
+import { startScannerForAdd } from "../barcode/scanner.js";
 
 export function addProductUI() {
-    const output = document.getElementById("output");
+    const container = document.getElementById("output");
 
-    output.innerHTML = `
+    container.innerHTML = `
         <h2>Add Product</h2>
+
         <input id="name" placeholder="Product Name"><br>
+        <input id="barcode" placeholder="Barcode"><br>
         <input id="qty" placeholder="Quantity"><br>
         <input id="exp" type="date"><br>
-        <button onclick="saveProduct()">Save</button>
+
+        <button id="scanBtn">Scan Barcode</button>
+        <button id="saveBtn">Save</button>
+
+        <div id="reader"></div>
     `;
+
+    // 🔥 EVENT DELEGATION (IMPORTANT FIX)
+    container.onclick = (e) => {
+
+        // SAVE
+        if (e.target.id === "saveBtn") {
+            console.log("SAVE CLICKED 🔥");
+
+            const name = document.getElementById("name").value;
+            const barcode = document.getElementById("barcode").value;
+            const qty = document.getElementById("qty").value;
+            const exp = document.getElementById("exp").value;
+
+            console.log(name, barcode, qty, exp);
+
+            if (!name || !barcode || !qty || !exp) {
+                alert("Fill all fields");
+                return;
+            }
+
+            addProduct(name, barcode, qty, exp);
+            alert("Product Added ✅");
+        }
+
+        // SCAN
+        if (e.target.id === "scanBtn") {
+            startScannerForAdd();
+        }
+    };
 }
-
-window.saveProduct = function() {
-    const name = document.getElementById("name").value;
-    const qty = document.getElementById("qty").value;
-    const exp = document.getElementById("exp").value;
-
-    addProduct(name, qty, exp);
-    alert("Product Added");
-};

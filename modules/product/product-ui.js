@@ -47,3 +47,20 @@ export function addProductUI() {
         }
     };
 }
+
+async function fetchProductDetails(barcode) {
+    try {
+        const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+        const data = await res.json();
+
+        if (data.status === 1) {
+            const product = data.product;
+
+            document.getElementById("name").value = product.product_name || "";
+        } else {
+            alert("Product not found in database");
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}

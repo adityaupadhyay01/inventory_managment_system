@@ -1,11 +1,34 @@
 let scanner = null;
 
+// 🔥 API FETCH FUNCTION
+async function fetchProductDetails(barcode) {
+    try {
+        const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+        const data = await res.json();
+
+        if (data.status === 1) {
+            const product = data.product;
+
+            const nameInput = document.getElementById("name");
+
+            if (nameInput) {
+                nameInput.value = product.product_name || "";
+            }
+
+            console.log("Product Found:", product.product_name);
+        } else {
+            console.log("Product not found in API");
+        }
+    } catch (err) {
+        console.error("API error:", err);
+    }
+}
+
+// 🔥 ADD SCANNER
 export function startScannerForAdd() {
 
     const readerId = "reader";
-    const readerElement = document.getElementById(readerId);
 
-    // 🔥 Clear previous scanner if exists
     if (scanner) {
         scanner.stop().then(() => {
             scanner.clear();
@@ -17,10 +40,10 @@ export function startScannerForAdd() {
     scanner.start(
         { facingMode: "environment" },
         {
-            fps: 10,
+            fps: 15,
             qrbox: 250
         },
-        (decodedText) => {
+        async (decodedText) => {
             console.log("Scanned:", decodedText);
 
             const barcodeInput = document.getElementById("barcode");
@@ -29,10 +52,10 @@ export function startScannerForAdd() {
                 barcodeInput.value = decodedText;
             }
 
+            // 🔥 AUTO FETCH PRODUCT
+            await fetchProductDetails(decodedText);
+
             stopScanner();
-        },
-        (errorMessage) => {
-            // silent ignore (scanner keeps scanning)
         }
     ).catch(err => {
         console.error("Scanner error:", err);
@@ -40,7 +63,7 @@ export function startScannerForAdd() {
     });
 }
 
-// 🔥 Reusable stop function
+// 🔥 STOP FUNCTION
 export function stopScanner() {
     if (scanner) {
         scanner.stop()
@@ -52,10 +75,10 @@ export function stopScanner() {
     }
 }
 
+// 🔥 SELL SCANNER
 export function startScannerForSell() {
 
     const readerId = "reader";
-    const readerElement = document.getElementById(readerId);
 
     if (scanner) {
         scanner.stop().then(() => {
@@ -67,7 +90,10 @@ export function startScannerForSell() {
 
     scanner.start(
         { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
+        {
+            fps: 15,
+            qrbox: 250
+        },
         (decodedText) => {
             console.log("Scanned:", decodedText);
 

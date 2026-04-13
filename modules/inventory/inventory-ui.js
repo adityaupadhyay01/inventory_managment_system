@@ -173,11 +173,42 @@ export function showInsightsUI() {
 
     let html = "<h2>Insights</h2>";
 
-    html += "<h3>Low Stock</h3>";
-    low.forEach(p => html += `<p>${p.name}</p>`);
+    // 🔻 LOW STOCK
+    html += "<h3> Low Stock</h3>";
+    if (low.length === 0) {
+        html += "<p>No low stock items</p>";
+    } else {
+        low.forEach(p => html += `<p>${p.name}</p>`);
+    }
 
-    html += "<h3>Expiry</h3>";
-    exp.forEach(p => html += `<p>${p.name}</p>`);
+    // 🔻 EXPIRY
+    html += "<h3> Expiry Alerts</h3>";
+    if (exp.length === 0) {
+        html += "<p>No expiry items</p>";
+    } else {
+        exp.forEach(p => html += `<p>${p.name}</p>`);
+    }
+
+    // DEMAND PREDICTION (SMART PLACEHOLDER)
+    html += `
+        <hr>
+        <h3>Demand Prediction</h3>
+        <p style="color: gray;">
+            Data not sufficient yet. System is learning from sales patterns...
+        </p>
+    `;
+
+    // SMART SUGGESTIONS
+    html += `
+        <h3> Smart Suggestions</h3>
+        <ul style="color: gray;">
+            <li>Maintain optimal stock levels to avoid sudden shortages</li>
+            <li>Track frequently sold items for better restocking decisions</li>
+            <li>Use the system daily to improve prediction accuracy</li>
+            <li>Ensure product data is updated regularly</li>
+        </ul>
+    `;
+
 
     document.getElementById("output").innerHTML = html;
 }

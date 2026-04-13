@@ -10,6 +10,7 @@ export function addProductUI() {
         <input id="name" placeholder="Product Name"><br>
         <input id="barcode" placeholder="Barcode"><br>
         <input id="qty" placeholder="Quantity"><br>
+        <input id="price" placeholder="Price"><br>
         <input id="exp" type="date"><br>
 
         <button id="scanBtn">Scan Barcode</button>
@@ -18,28 +19,30 @@ export function addProductUI() {
         <div id="reader"></div>
     `;
 
-    // 🔥 EVENT DELEGATION (IMPORTANT FIX)
+    // EVENT DELEGATION (IMPORTANT FIX)
     container.onclick = (e) => {
 
         // SAVE
         if (e.target.id === "saveBtn") {
-            console.log("SAVE CLICKED 🔥");
+    console.log("SAVE CLICKED");
 
-            const name = document.getElementById("name").value;
-            const barcode = document.getElementById("barcode").value;
-            const qty = document.getElementById("qty").value;
-            const exp = document.getElementById("exp").value;
+    const name = document.getElementById("name").value;
+    const barcode = document.getElementById("barcode").value;
+    const qty = document.getElementById("qty").value;
+    const price = document.getElementById("price").value;
+    const exp = document.getElementById("exp").value;
 
-            console.log(name, barcode, qty, exp);
+    console.log(name, barcode, qty, price, exp);
 
-            if (!name || !barcode || !qty || !exp) {
-                alert("Fill all fields");
-                return;
-            }
+    if (!name || !barcode || !qty || !price || !exp) {
+        alert("Fill all fields");
+        return;
+    }
 
-            addProduct(name, barcode, qty, exp);
-            alert("Product Added ✅");
-        }
+    addProduct(name, barcode, qty, price, exp);
+
+    alert("Product Added");
+}
 
         // SCAN
         if (e.target.id === "scanBtn") {

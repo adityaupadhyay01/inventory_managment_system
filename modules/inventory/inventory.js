@@ -2,12 +2,12 @@ import { getData, saveData } from "../../utils/database.js";
 
 let cart = [];
 
-// ================= GET INVENTORY =================
+// GET INVENTORY
 export function getAllProducts() {
     return getData();
 }
 
-// ================= EXPIRY =================
+// EXPIRY
 export function getExpiryProducts() {
     const data = getData();
     const today = new Date();
@@ -19,7 +19,7 @@ export function getExpiryProducts() {
     });
 }
 
-// ================= CART =================
+// ADD TO CART
 export function addToCart(barcode) {
     const data = getData();
 
@@ -30,37 +30,98 @@ export function addToCart(barcode) {
         return;
     }
 
+    if (product.quantity <= 0) {
+        alert("Out of stock");
+        return;
+    }
+
     const existing = cart.find(item => item.barcode === barcode);
 
     if (existing) {
-        existing.qty += 1;
+        // Prevent exceeding stock
+        if (existing.qty < product.quantity) {
+            existing.qty += 1;
+        } else {
+            alert("Max stock reached");
+        }
     } else {
-        cart.push({ ...product, qty: 1 });
+        cart.push({
+            ...product,
+            qty: 1
+        });
     }
 
     console.log("Cart:", cart);
 }
 
-// ================= GET CART =================
+// GET CART 
 export function getCart() {
     return cart;
 }
 
-// ================= CHECKOUT =================
+// TOTAL BILL
+export function getCartTotal() {
+    let total = 0;
+
+    cart.forEach(item => {
+        total += (item.price || 0) * item.qty;
+    });
+
+    return total;
+}
+
+// CHECKOUT 
 export function checkout() {
     const data = getData();
 
+    for (let item of cart) {
+        const product = data.find(p => p.barcode === item.barcode);
+
+        if (!product) continue;
+
+        if (product.quantity < item.qty) {
+            alert(`Not enough stock for ${item.name}`);
+            return; 
+        }
+    }
+
+    // Safe deduction
     cart.forEach(item => {
         const product = data.find(p => p.barcode === item.barcode);
 
-        if (product && product.quantity >= item.qty) {
-            product.quantity -= item.qty;
-            product.sold += item.qty;
-        }
+        product.quantity -= item.qty;
+        product.sold += item.qty;
     });
 
     saveData(data);
+
+    // Show bill before clearing
+    const total = getCartTotal();
+
     cart = [];
 
-    alert("Checkout Done ✅");
+    alert(`Checkout Done \nTotal Bill: ₹${total}`);
+}
+
+//delete
+
+export function deleteProduct(barcode) {
+    let data = getData();
+
+    const product = data.find(p => p.barcode === barcode);
+
+    if (!product) {
+        alert("Product not found");
+        return;
+    }
+
+    const confirmDelete = confirm(`Delete ${product.name}?`);
+
+    if (!confirmDelete) return;
+
+    data = data.filter(p => p.barcode !== barcode);
+
+    saveData(data);
+
+    alert("Product deleted");
 }

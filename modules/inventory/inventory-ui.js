@@ -1,4 +1,11 @@
-import { getAllProducts, getExpiryProducts, getCart, checkout } from "./inventory.js";
+import { 
+    getAllProducts, 
+    getExpiryProducts, 
+    getCart, 
+    checkout, 
+    deleteProduct 
+} from "./inventory.js";
+
 import { startScannerForSell, stopScanner } from "../barcode/scanner.js";
 
 const getContainer = () => document.getElementById("output");
@@ -47,7 +54,7 @@ function renderCart() {
 
     document.getElementById("checkoutBtn").onclick = () => {
         checkout();
-        renderCart(); // refresh after checkout
+        renderCart();
     };
 }
 
@@ -69,14 +76,23 @@ export function showInventoryUI() {
             <div style="border:1px solid #ccc; padding:10px; margin:5px;">
                 <p><b>Name:</b> ${p.name}</p>
                 <p><b>Quantity:</b> ${p.quantity}</p>
-                <p><b>Barcode:</b> ${p.barcode || "N/A"}</p>
+                <p><b>Price:</b> ₹${p.price || 0}</p>
                 <p><b>Expiry:</b> ${p.expiry}</p>
+
+                <button onclick="deleteItem('${p.barcode}')">Delete</button>
             </div>
         `;
     });
 
     container.innerHTML = html;
 }
+
+
+// ================= DELETE HANDLER =================
+window.deleteItem = function(barcode) {
+    deleteProduct(barcode);
+    showInventoryUI(); // refresh
+};
 
 
 // ================= EXPIRY =================

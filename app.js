@@ -45,3 +45,53 @@ document.body.addEventListener("click", (e) => {
 });
 
 showDashboardUI(); 
+
+window.addEventListener("DOMContentLoaded", () => {
+    const langBtn = document.getElementById("langBtn");
+    const langMenu = document.getElementById("langMenu");
+
+    if (!langBtn || !langMenu) return;
+
+    // TOGGLE MENU
+    langBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        langMenu.style.display =
+            langMenu.style.display === "block" ? "none" : "block";
+    });
+
+    // TOAST FUNCTION
+    function showToast(msg) {
+        const toast = document.getElementById("toast");
+        if (!toast) return;
+
+        toast.innerText = msg;
+        toast.classList.add("show");
+
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 2000);
+    }
+
+    // LANGUAGE CLICK
+    document.querySelectorAll("#langMenu p").forEach(item => {
+    item.addEventListener("click", () => {
+        const lang = item.innerText.trim();
+
+        if (lang === "English" || lang === "Hindi") {
+            showToast(`${lang} Selected`);
+        } else {
+            showToast("Coming Soon");
+        }
+
+        langMenu.style.display = "none";
+    });
+});
+
+    // CLICK OUTSIDE CLOSE
+    document.addEventListener("click", (e) => {
+        if (!e.target.closest(".top-lang")) {
+            langMenu.style.display = "none";
+        }
+    });
+
+}); 

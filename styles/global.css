@@ -1,14 +1,179 @@
+/* 🎨 COLOR VARIABLES */
+:root {
+  --pink: #FADADD;
+  --green: #E2F0CB;
+  --blue: #C9E4DE;
+  --soft-pink: #FFE5EC;
+
+  --text: #1f2937;
+  --border: #e5e7eb;
+}
+
+/* 🔥 RESET */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 🔥 BODY */
 body {
-    font-family: Arial;
-    padding: 20px;
+  font-family: system-ui, sans-serif;
+  background: #f8fafc;
+  color: var(--text);
+  padding: 16px;
 }
 
+/* FIX OVERFLOW */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* 🔥 LOGO */
+.logo {
+  font-size: 32px;
+  font-weight: 700;
+  color: #374151; /* clean premium look */
+  margin-bottom: 16px;
+}
+
+/* 🔥 NAVBAR (GLASS) */
+#navbar {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+
+  padding: 10px;
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+
+  margin-bottom: 20px;
+}
+
+#navbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 🔥 BUTTON BASE */
 button {
-    padding: 10px;
-    margin: 5px;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  min-height: 44px;
+  font-size: 14px;
 }
 
+/* NAV BUTTON */
+#navbar button {
+  background: var(--soft-pink);
+}
+
+#navbar button:hover {
+  background: var(--pink);
+}
+
+/* BUTTON COLORS */
+#addBtn { background: var(--pink); }
+#sellBtn { background: var(--green); }
+#showInventoryBtn { background: var(--blue); }
+#expiryBtn { background: var(--soft-pink); }
+
+/* BUTTON HOVER */
+button:hover {
+  opacity: 0.85;
+}
+
+/* 🔥 OUTPUT CARD */
+#output {
+  width: 100%;
+  padding: 18px;
+
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(12px);
+
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* 🔥 HEADINGS */
+h1 {
+  font-size: 28px;
+}
+
+h2 {
+  margin-bottom: 12px;
+}
+
+p {
+  margin: 6px 0;
+}
+
+/* 🔥 BUTTON GROUP */
+.btn-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+/* 🔥 INPUT */
 input {
-    margin: 5px;
-    padding: 8px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #9ca3af;
+}
+
+/* 🔥 INVENTORY CARDS */
+#stockContent div {
+  background: #f9fafb;
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+/* 🔥 HR */
+hr {
+  margin: 15px 0;
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+/* 📱 MOBILE RESPONSIVE */
+@media (max-width: 600px) {
+
+  h1 {
+    font-size: 22px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  .btn-group {
+    flex-direction: column;
+  }
+
+  .btn-group button {
+    width: 100%;
+  }
+
+  button {
+    width: 100%;
+  }
 }

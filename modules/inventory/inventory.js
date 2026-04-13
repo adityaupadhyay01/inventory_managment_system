@@ -125,3 +125,23 @@ export function deleteProduct(barcode) {
 
     alert("Product deleted");
 }
+
+export function getLowStockProducts() {
+    const data = getData();
+    return data.filter(p => p.quantity <= 5);
+}
+
+export function getDashboardData() {
+    const data = getData();
+
+    let totalProducts = data.length;
+    let totalItems = 0;
+    let totalRevenue = 0;
+
+    data.forEach(p => {
+        totalItems += p.quantity;
+        totalRevenue += (p.price || 0) * (p.sold || 0);
+    });
+
+    return { totalProducts, totalItems, totalRevenue };
+}

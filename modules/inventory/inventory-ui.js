@@ -1,21 +1,83 @@
-import { 
-    getAllProducts, 
-    getExpiryProducts, 
-    getCart, 
-    checkout, 
-    deleteProduct 
+import { startScannerForAdd } from "../barcode/scanner.js";
+
+import {
+    getAllProducts,
+    getExpiryProducts,
+    getLowStockProducts,
+    getDashboardData,
+    deleteProduct,
+    addToCart,
+    getCart,
+    checkout
 } from "./inventory.js";
 
 import { startScannerForSell, stopScanner } from "../barcode/scanner.js";
 
-const getContainer = () => document.getElementById("output");
+
+// 🔹 DASHBOARD
+export function showDashboardUI() {
+    const stats = getDashboardData();
+
+    document.getElementById("output").innerHTML = `
+        <h2>Dashboard</h2>
+        <p>Total Products: ${stats.totalProducts}</p>
+        <p>Total Items: ${stats.totalItems}</p>
+        <p>Total Revenue: ₹${stats.totalRevenue}</p>
+    `;
+}
 
 
-// ================= SELL (SCAN + CART) =================
-export function sellProductUI() {
-    const container = getContainer();
+// 🔹 ADD PRODUCT
+
+  export function addProductUI() {
+    const content = document.getElementById("stockContent");
+
+    content.innerHTML = `
+        <h2>Add Product</h2>
+
+        <input placeholder="Product Name" id="name" />
+        <input placeholder="Barcode" id="barcode" />
+        <input placeholder="Quantity" id="quantity" />
+        <input placeholder="Price" id="price" />
+        <input type="date" id="expiry" />
+
+        <br><br>
+
+        <button id="scanBtn">Scan Barcode</button>
+        <button id="saveBtn">Save</button>
+
+        <div id="reader"></div>
+    `;
+
+    document.getElementById("scanBtn").onclick = startScannerForAdd;
+    document.getElementById("saveBtn").onclick = saveProduct; 
+}
+
+
+// 🔹 STOCKS PAGE
+export function showInventoryUI() {
+    const container = document.getElementById("output");
 
     container.innerHTML = `
+        <h2>Stocks Management</h2>
+
+        <button id="addBtn">Add Product</button>
+        <button id="sellBtn">Sell Product</button>
+        <button id="showInventoryBtn">Show Inventory</button>
+        <button id="expiryBtn">Expiry Alerts</button>
+
+        <hr>
+
+        <div id="stockContent"></div>
+    `;
+}
+
+
+// 🔹 SELL UI
+export function sellProductUI() {
+    const content = document.getElementById("stockContent");
+
+    content.innerHTML = `
         <h2>Sell Product (Scan to Add)</h2>
 
         <button id="scanBtn">Start Scanning</button>
@@ -32,7 +94,7 @@ export function sellProductUI() {
 }
 
 
-// ================= CART UI =================
+// 🔹 CART
 function renderCart() {
     const cart = getCart();
     const cartDiv = document.getElementById("cartList");
@@ -59,62 +121,105 @@ function renderCart() {
 }
 
 
-// ================= INVENTORY =================
-export function showInventoryUI() {
-    const container = getContainer();
+// 🔹 INVENTORY
+export function renderInventoryList() {
+    const content = document.getElementById("stockContent");
     const products = getAllProducts();
 
     if (products.length === 0) {
-        container.innerHTML = "<p>No products added yet</p>";
+        content.innerHTML = "<p>No products added yet</p>";
         return;
     }
 
-    let html = "<h2>Inventory List</h2>";
+    let html = "<h3>Inventory List</h3>";
 
     products.forEach(p => {
         html += `
-            <div style="border:1px solid #ccc; padding:10px; margin:5px;">
-                <p><b>Name:</b> ${p.name}</p>
-                <p><b>Quantity:</b> ${p.quantity}</p>
-                <p><b>Price:</b> ₹${p.price || 0}</p>
-                <p><b>Expiry:</b> ${p.expiry}</p>
-
+            <div>
+                <p>${p.name} (Qty: ${p.quantity})</p>
                 <button onclick="deleteItem('${p.barcode}')">Delete</button>
             </div>
         `;
     });
 
-    container.innerHTML = html;
+    content.innerHTML = html;
 }
 
 
-// ================= DELETE HANDLER =================
-window.deleteItem = function(barcode) {
-    deleteProduct(barcode);
-    showInventoryUI(); // refresh
-};
-
-
-// ================= EXPIRY =================
+// 🔹 EXPIRY
 export function showExpiryUI() {
-    const container = getContainer();
+    const content = document.getElementById("stockContent");
     const items = getExpiryProducts();
 
     if (items.length === 0) {
-        container.innerHTML = "<p>No expiry products</p>";
+        content.innerHTML = "<p>No expiry products</p>";
         return;
     }
 
-    let html = "<h2>Expiry Products</h2>";
+    let html = "<h3>Expiry Alerts</h3>";
 
     items.forEach(p => {
-        html += `
-            <div style="border:2px solid red; padding:10px; margin:5px;">
-                <p><b>${p.name}</b></p>
-                <p>Expiry: ${p.expiry}</p>
-            </div>
-        `;
+        html += `<p>${p.name} (Expiry: ${p.expiry})</p>`;
     });
 
-    container.innerHTML = html;
+    content.innerHTML = html;
+}
+
+
+// 🔹 INSIGHTS
+export function showInsightsUI() {
+    const low = getLowStockProducts();
+    const exp = getExpiryProducts();
+
+    let html = "<h2>Insights</h2>";
+
+    html += "<h3>Low Stock</h3>";
+    low.forEach(p => html += `<p>${p.name}</p>`);
+
+    html += "<h3>Expiry</h3>";
+    exp.forEach(p => html += `<p>${p.name}</p>`);
+
+    document.getElementById("output").innerHTML = html;
+}
+
+
+// 🔹 DELETE
+window.deleteItem = function(barcode) {
+    deleteProduct(barcode);
+    renderInventoryList();
+};
+
+function saveProduct() {
+    const name = document.getElementById("name").value;
+    const barcode = document.getElementById("barcode").value;
+    const quantity = parseInt(document.getElementById("quantity").value);
+    const price = parseFloat(document.getElementById("price").value);
+    const expiry = document.getElementById("expiry").value;
+
+    if (!name || !barcode || !quantity) {
+        alert("Fill all required fields");
+        return;
+    }
+
+    const product = {
+        name,
+        barcode,
+        quantity,
+        price,
+        expiry,
+        sold: 0
+    };
+
+    // SAVE TO DATABASE
+    const data = getAllProducts();
+    data.push(product);
+    localStorage.setItem("inventory", JSON.stringify(data));
+
+    alert("Product Saved ");
+
+    // optional: reset form
+    document.getElementById("name").value = "";
+    document.getElementById("barcode").value = "";
+    document.getElementById("quantity").value = "";
+    document.getElementById("price").value = "";
 }

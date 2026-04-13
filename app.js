@@ -1,20 +1,47 @@
-import { addProductUI } from "./modules/product/product-ui.js";
-import * as inventoryUI from "./modules/inventory/inventory-ui.js";
+import {
+    showDashboardUI,
+    showInventoryUI,
+    showInsightsUI,
+    sellProductUI,
+    showExpiryUI,
+    renderInventoryList,
+    addProductUI
+} from "./modules/inventory/inventory-ui.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+console.log("App Started");
 
-    console.log("App Started");
+// NAVBAR
+document.getElementById("navDashboard")?.addEventListener("click", showDashboardUI);
+document.getElementById("navStocks")?.addEventListener("click", showInventoryUI);
+document.getElementById("navInsights")?.addEventListener("click", showInsightsUI);
 
-    document.getElementById("addBtn")
-        ?.addEventListener("click", addProductUI);
+document.getElementById("navProfile")?.addEventListener("click", () => {
+    document.getElementById("output").innerHTML = "<h2>Profile Coming Soon</h2>";
+});
 
-    document.getElementById("showBtn")
-        ?.addEventListener("click", inventoryUI.showInventoryUI);
+// BUTTONS (event delegation)
+document.body.addEventListener("click", (e) => {
 
-    document.getElementById("sellBtn")
-        ?.addEventListener("click", inventoryUI.sellProductUI);
+    if (e.target.id === "addBtn") {
+        addProductUI();
+    }
 
-    document.getElementById("expiryBtn")
-        ?.addEventListener("click", inventoryUI.showExpiryUI);
+    if (e.target.id === "showBtn") {
+        showInventoryUI();
+    }
+
+    if (e.target.id === "sellBtn") {
+        sellProductUI();
+    }
+
+    if (e.target.id === "showInventoryBtn") {   
+        renderInventoryList();
+    }
+
+    if (e.target.id === "expiryBtn") {
+        showExpiryUI();
+    }
 
 });
+
+showDashboardUI(); 

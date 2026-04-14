@@ -1,5 +1,3 @@
-import { startScannerForAdd } from "../barcode/scanner.js";
-
 import {
     getAllProducts,
     getExpiryProducts,
@@ -11,25 +9,50 @@ import {
     checkout
 } from "./inventory.js";
 
-import { startScannerForSell, stopScanner } from "../barcode/scanner.js";
+import { startScannerForSell, stopScanner, startScannerForAdd } from "../barcode/scanner.js";
 
 
 // 🔹 DASHBOARD
 export function showDashboardUI() {
     const stats = getDashboardData();
 
+    const lang = window.currentLang || "en";
+    const t = window.translations?.[lang] || {};
+
     document.getElementById("output").innerHTML = `
-        <h2>Dashboard</h2>
-        <p>Total Products: ${stats.totalProducts}</p>
-        <p>Total Items: ${stats.totalItems}</p>
-        <p>Total Revenue: ₹${stats.totalRevenue}</p>
+        <h2>${t.dashboard || "Dashboard"}</h2>
+        <p>${t.totalProducts || "Total Products"}: ${stats.totalProducts}</p>
+        <p>${t.totalItems || "Total Items"}: ${stats.totalItems}</p>
+        <p>${t.totalRevenue || "Total Revenue"}: ₹${stats.totalRevenue}</p>
+    `;
+}
+
+
+// 🔹 STOCKS PAGE
+export function showInventoryUI() {
+    const container = document.getElementById("output");
+
+    const lang = window.currentLang || "en";
+    const t = window.translations?.[lang] || {};
+
+    container.innerHTML = `
+        <h2>${t.stocks || "Stocks"} Management</h2>
+
+        <div class="btn-group">
+            <button id="addBtn">${t.addProduct || "Add Product"}</button>
+            <button id="sellBtn">${t.sellProduct || "Sell Product"}</button>
+            <button id="showInventoryBtn">${t.showInventory || "Show Inventory"}</button>
+            <button id="expiryBtn">${t.expiryAlerts || "Expiry Alerts"}</button>
+        </div>
+
+        <hr>
+        <div id="stockContent"></div>
     `;
 }
 
 
 // 🔹 ADD PRODUCT
-
-  export function addProductUI() {
+export function addProductUI() {
     const content = document.getElementById("stockContent");
 
     content.innerHTML = `
@@ -50,26 +73,7 @@ export function showDashboardUI() {
     `;
 
     document.getElementById("scanBtn").onclick = startScannerForAdd;
-    document.getElementById("saveBtn").onclick = saveProduct; 
-}
-
-
-// 🔹 STOCKS PAGE
-export function showInventoryUI() {
-    const container = document.getElementById("output");
-
-    container.innerHTML = `
-        <h2>Stocks Management</h2>
-
-        <button id="addBtn">Add Product</button>
-        <button id="sellBtn">Sell Product</button>
-        <button id="showInventoryBtn">Show Inventory</button>
-        <button id="expiryBtn">Expiry Alerts</button>
-
-        <hr>
-
-        <div id="stockContent"></div>
-    `;
+    document.getElementById("saveBtn").onclick = saveProduct;
 }
 
 
@@ -121,7 +125,7 @@ function renderCart() {
 }
 
 
-// 🔹 INVENTORY
+// 🔹 INVENTORY LIST
 export function renderInventoryList() {
     const content = document.getElementById("stockContent");
     const products = getAllProducts();
@@ -171,44 +175,39 @@ export function showInsightsUI() {
     const low = getLowStockProducts();
     const exp = getExpiryProducts();
 
-    let html = "<h2>Insights</h2>";
+    const lang = window.currentLang || "en";
+    const t = window.translations?.[lang] || {};
 
-    // 🔻 LOW STOCK
-    html += "<h3> Low Stock</h3>";
-    if (low.length === 0) {
-        html += "<p>No low stock items</p>";
-    } else {
-        low.forEach(p => html += `<p>${p.name}</p>`);
-    }
+    let html = `<h2>${t.insights || "Insights"}</h2>`;
 
-    // 🔻 EXPIRY
-    html += "<h3> Expiry Alerts</h3>";
-    if (exp.length === 0) {
-        html += "<p>No expiry items</p>";
-    } else {
-        exp.forEach(p => html += `<p>${p.name}</p>`);
-    }
+    // LOW STOCK
+    html += `<h3>${t.lowStock || "Low Stock"}</h3>`;
+    html += low.length === 0
+        ? `<p>${t.noLowStock || "No low stock items"}</p>`
+        : low.map(p => `<p>${p.name}</p>`).join("");
 
-    // DEMAND PREDICTION (SMART PLACEHOLDER)
+    // EXPIRY
+    html += `<h3>${t.expiryAlerts || "Expiry Alerts"}</h3>`;
+    html += exp.length === 0
+        ? `<p>${t.noExpiry || "No expiry items"}</p>`
+        : exp.map(p => `<p>${p.name}</p>`).join("");
+
+    // DEMAND
     html += `
         <hr>
-        <h3>Demand Prediction</h3>
-        <p style="color: gray;">
-            Data not sufficient yet. System is learning from sales patterns...
-        </p>
+        <h3>${t.demand || "Demand Prediction"}</h3>
+        <p style="color: gray;">${t.demandMsg || "Data not sufficient yet..."}</p>
     `;
 
-    // SMART SUGGESTIONS
-    html += `
-        <h3> Smart Suggestions</h3>
-        <ul style="color: gray;">
-            <li>Maintain optimal stock levels to avoid sudden shortages</li>
-            <li>Track frequently sold items for better restocking decisions</li>
-            <li>Use the system daily to improve prediction accuracy</li>
-            <li>Ensure product data is updated regularly</li>
-        </ul>
-    `;
+    // SUGGESTIONS
+    html += `<h3>${t.suggestions || "Smart Suggestions"}</h3>`;
+    html += `<ul style="color: gray;">`;
 
+    (t.suggestionsList || []).forEach(item => {
+        html += `<li>${item}</li>`;
+    });
+
+    html += `</ul>`;
 
     document.getElementById("output").innerHTML = html;
 }
@@ -220,6 +219,8 @@ window.deleteItem = function(barcode) {
     renderInventoryList();
 };
 
+
+// 🔹 SAVE PRODUCT
 function saveProduct() {
     const name = document.getElementById("name").value;
     const barcode = document.getElementById("barcode").value;
@@ -241,14 +242,12 @@ function saveProduct() {
         sold: 0
     };
 
-    // SAVE TO DATABASE
     const data = getAllProducts();
     data.push(product);
     localStorage.setItem("inventory", JSON.stringify(data));
 
     alert("Product Saved ");
 
-    // optional: reset form
     document.getElementById("name").value = "";
     document.getElementById("barcode").value = "";
     document.getElementById("quantity").value = "";

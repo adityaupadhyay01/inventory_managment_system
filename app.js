@@ -10,6 +10,83 @@ import {
 
 console.log("App Started");
 
+window.currentLang = "en";
+window.translations = {
+    en: {
+    dashboard: "Dashboard",
+    totalProducts: "Total Products",
+    totalItems: "Total Items",
+    totalRevenue: "Total Revenue",
+
+    stocks: "Stocks",
+    insights: "Insights",
+    profile: "Profile",
+    language: "Language",
+
+    addProduct: "Add Product",
+    sellProduct: "Sell Product",
+    showInventory: "Show Inventory",
+    expiryAlerts: "Expiry Alerts",
+
+    lowStock: "Low Stock",
+    noLowStock: "No low stock items",
+
+    noExpiry: "No expiry items",
+
+    demand: "Demand Prediction",
+    demandMsg: "Data not sufficient yet. System is learning...",
+
+    suggestions: "Smart Suggestions",
+
+    suggestionsList: [
+        "Maintain optimal stock levels",
+        "Track frequently sold items"
+    ]
+},
+
+    hi: {
+    dashboard: "डैशबोर्ड",
+    totalProducts: "कुल उत्पाद",
+    totalItems: "कुल आइटम",
+    totalRevenue: "कुल राजस्व",
+
+    stocks: "स्टॉक्स",
+    insights: "इनसाइट्स",
+    profile: "प्रोफाइल",
+    language: "भाषा",
+
+    addProduct: "उत्पाद जोड़ें",
+    sellProduct: "उत्पाद बेचें",
+    showInventory: "इन्वेंट्री देखें",
+    expiryAlerts: "एक्सपायरी अलर्ट",
+
+    lowStock: "कम स्टॉक",
+    noLowStock: "कोई कम स्टॉक आइटम नहीं",
+
+    noExpiry: "कोई एक्सपायरी आइटम नहीं",
+
+    demand: "मांग पूर्वानुमान",
+    demandMsg: "पर्याप्त डेटा नहीं है। सिस्टम सीख रहा है...",
+
+    suggestions: "स्मार्ट सुझाव",
+
+    suggestionsList: [
+        "उचित स्टॉक स्तर बनाए रखें",
+        "ज्यादा बिकने वाले उत्पादों को ट्रैक करें"
+    ]
+}
+};
+function updateLanguage(lang) {
+    window.currentLang = lang;
+
+    document.getElementById("langBtn").innerText = translations[lang].language;
+    document.getElementById("navDashboard").innerText = translations[lang].dashboard;
+    document.getElementById("navStocks").innerText = translations[lang].stocks;
+    document.getElementById("navInsights").innerText = translations[lang].insights;
+    document.getElementById("navProfile").innerText = translations[lang].profile;
+    showDashboardUI();
+}
+
 // NAVBAR
 document.getElementById("navDashboard")?.addEventListener("click", showDashboardUI);
 document.getElementById("navStocks")?.addEventListener("click", showInventoryUI);
@@ -73,14 +150,20 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // LANGUAGE CLICK
-    document.querySelectorAll("#langMenu p").forEach(item => {
+   document.querySelectorAll("#langMenu p").forEach(item => {
     item.addEventListener("click", () => {
         const lang = item.innerText.trim();
 
-        if (lang === "English" || lang === "Hindi") {
-            showToast(`${lang} Selected`);
-        } else {
-            showToast("Coming Soon");
+        if (lang === "English") {
+            updateLanguage("en");
+            showToast("English Selected");
+        } 
+        else if (lang === "Hindi") {
+            updateLanguage("hi");
+            showToast("हिंदी चयनित ");
+        } 
+        else {
+            showToast("Coming Soon ");
         }
 
         langMenu.style.display = "none";

@@ -132,35 +132,79 @@ Logout → Back to login screen
 ## ⚡ How to Run
 
 ### 🖥️ Local
-```bash
-Open index.html in browser
+Open `index.html` in your browser
 
-🌐 Recommended (for scanner)
+### 🌐 Recommended (for scanner)
+Deploy on Netlify or any HTTPS hosting
 
-Deploy using Netlify or any HTTPS hosting.
+---
 
-🔮 Future Scope
-🎤 Voice-based billing
-☁️ Firestore database integration
-📈 Advanced analytics dashboard
-🌍 Full multi-language support
-🤖 AI-based demand prediction
+## 📸 Scanner Notes
 
-Author
+- Requires HTTPS (important)  
+- May not work on localhost  
+- Optimized for mobile  
+
+---
+
+## 🔮 Future Scope
+
+- 🎤 Voice-based billing  
+- ☁️ Firestore integration  
+- 📈 Advanced analytics  
+- 🌍 Multi-language expansion  
+- 🤖 AI demand prediction  
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome.
+
+1. Fork the repo  
+2. Create a new branch  
+3. Commit changes  
+4. Open a pull request  
+
+---
+
+## 👨‍💻 Author
+
 <div align="center">
 
-Aditya
+**Aditya**
 
-<a href="https://www.linkedin.com/in/your-username"> <img src="https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin" /> </a> <a href="https://peerlist.io/your-username"> <img src="https://img.shields.io/badge/Peerlist-View_Profile-black?style=for-the-badge" /> </a> </div>
-📜 License
+<a href="https://www.linkedin.com/in/your-username">
+  <img src="https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin" />
+</a>
 
-⚠️ Copyright (c) 2026 Aditya
+<a href="https://peerlist.io/your-username">
+  <img src="https://img.shields.io/badge/Peerlist-View_Profile-black?style=for-the-badge" />
+</a>
 
-This project is intended for educational and demonstration purposes only.
+</div>
 
-❌ Unauthorized copying, redistribution, or commercial use is prohibited.
-✅ You may use it for personal learning and experimentation.
+---
 
-💡 Vision
+## 📜 License
+
+⚠️ **Copyright (c) 2026 Aditya**
+
+This project is for **educational and demonstration purposes only**.
+
+❌ You are NOT allowed to:
+- Copy and submit this project as your own  
+- Use it for commercial purposes  
+- Redistribute or re-upload  
+
+✅ You are allowed to:
+- Learn from the code  
+- Modify for personal use  
+
+---
+
+## 💡 Vision
+
+To empower small businesses in India with simple, digital tools that improve efficiency and growth.
 
 To empower small businesses in India with simple, affordable, and smart digital tools that improve efficiency and growth.

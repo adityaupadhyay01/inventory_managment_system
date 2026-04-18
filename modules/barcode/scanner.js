@@ -1,97 +1,177 @@
 import { addToCart } from "../inventory/inventory.js";
+import { fetchProductDetails } from "../product/product-ui.js";
 
 let scanner = null;
+let isScanning = false;
 
+// 🔒 scan control
+let lastValidScan = "";
+let scanLock = false;
 
-// ================= COMMON SCANNER START =================
-function startScanner(callback) {
+// ================= START SCANNER =================
+async function startScanner(callback, singleScan = false) {
     const readerId = "reader";
+    const reader = document.getElementById(readerId);
 
-    // stop previous scanner if running
-    if (scanner) {
-        scanner.stop().then(() => scanner.clear()).catch(() => {});
+    if (!reader) {
+        console.error("Reader element not found");
+        return;
+    }
+
+    reader.style.display = "block";
+    reader.innerHTML = "";
+
+    // stop previous
+    if (scanner && isScanning) {
+        try {
+            await scanner.stop();
+            await scanner.clear();
+        } catch (e) {
+            console.warn("Stop error:", e);
+        }
+        scanner = null;
+        isScanning = false;
     }
 
     scanner = new Html5Qrcode(readerId);
 
-    scanner.start(
-        { facingMode: "environment" },
-        {
-            fps: 15,
-            qrbox: 250
-        },
-        callback,
-        (error) => {
-            // ignore scan errors (normal behavior)
-        }
-    ).catch(err => {
-        console.error("Scanner error:", err);
-        alert("Camera error / permission issue");
-    });
-}
-
-
-// ================= STOP SCANNER =================
-export function stopScanner() {
-    if (scanner) {
-        scanner.stop()
-            .then(() => {
-                scanner.clear();
-                scanner = null;
-            })
-            .catch(() => {});
-    }
-}
-
-
-// ================= ADD PRODUCT SCANNER =================
-async function fetchProductDetails(barcode) {
     try {
-        const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
-        const data = await res.json();
+        const devices = await Html5Qrcode.getCameras();
 
-        if (data.status === 1) {
-            const product = data.product;
-
-            const nameInput = document.getElementById("name");
-
-            if (nameInput) {
-                nameInput.value = product.product_name || "";
-            }
-
-            console.log("Auto-filled:", product.product_name);
+        if (!devices.length) {
+            alert("No camera found ❌");
+            return;
         }
+
+        const backCam = devices.find(d =>
+            d.label.toLowerCase().includes("back")
+        );
+
+        const cameraId = backCam ? backCam.id : devices[0].id;
+
+        await new Promise(r => setTimeout(r, 100));
+
+        await scanner.start(
+            cameraId,
+            {
+                fps: 5, // 🔥 stability over speed
+                qrbox: { width: 200, height: 200 },
+                aspectRatio: 1.0
+            },
+            async (decodedText) => {
+
+                if (!isScanning) return;
+
+                // 🚫 ignore invalid scans
+                if (!/^\d{8,13}$/.test(decodedText)) return;
+
+                // 🚫 prevent duplicate spam
+                if (scanLock && decodedText === lastValidScan) return;
+
+                scanLock = true;
+                lastValidScan = decodedText;
+
+                setTimeout(() => {
+                    scanLock = false;
+                }, 1200);
+
+                try {
+                    await callback(decodedText);
+                } catch (err) {
+                    console.error("Callback error:", err);
+                }
+
+                if (singleScan) {
+                    await stopScanner();
+                }
+            },
+            () => {}
+        );
+
+        isScanning = true;
+
     } catch (err) {
-        console.log("API error:", err);
+        console.error("Camera error:", err);
+        alert("Camera not opening ❌");
+        reader.style.display = "none";
     }
 }
 
+// ================= STOP =================
+export async function stopScanner() {
+    if (scanner && isScanning) {
+        try {
+            await scanner.stop();
+            await scanner.clear();
+        } catch (e) {
+            console.warn("Stop error:", e);
+        }
+    }
+
+    scanner = null;
+    isScanning = false;
+
+    const reader = document.getElementById("reader");
+    if (reader) {
+        reader.innerHTML = "";
+        reader.style.display = "none";
+    }
+}
+
+// ================= ADD PRODUCT =================
 export function startScannerForAdd() {
-    startScanner(async (decodedText) => {
-        console.log("Scanned (ADD):", decodedText);
+    startScanner((code) => {
 
         const barcodeInput = document.getElementById("barcode");
+        const nameInput = document.getElementById("name");
 
-        if (barcodeInput) {
-            barcodeInput.value = decodedText;
-        }
+        if (barcodeInput) barcodeInput.value = code;
+        if (nameInput) nameInput.value = "Fetching...";
 
-        await fetchProductDetails(decodedText);
+        // async API (non-blocking)
+        fetchProductDetails(code)
+            .then(() => showScanToast("Product Loaded ✅"))
+            .catch(() => {
+                if (nameInput) {
+                    nameInput.value = "";
+                    nameInput.placeholder = "Enter manually";
+                }
+                showScanToast("Not Found ❌");
+            });
 
-        stopScanner(); // single scan for add
-    });
+    }, true);
 }
 
-
-// ================= SELL SCANNER (CART MODE) =================
+// ================= SELL PRODUCT =================
 export function startScannerForSell() {
-    startScanner((decodedText) => {
-        console.log("Scanned (SELL):", decodedText);
+    startScanner((code) => {
+        addToCart(code);
+        showScanToast("Added to cart ✅");
+    }, false);
+}
 
-        addToCart(decodedText);
+// ================= TOAST =================
+let toastTimeout = null;
 
-        alert("Added to cart ✅");
+function showScanToast(msg) {
+    let toast = document.getElementById("scanToast");
 
-        // 🔥 DON'T STOP → allow multiple scans
-    });
+    if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "scanToast";
+        document.body.appendChild(toast);
+    }
+
+    if (toastTimeout) clearTimeout(toastTimeout);
+
+    toast.innerText = msg;
+    toast.classList.remove("show");
+
+    void toast.offsetWidth;
+
+    toast.classList.add("show");
+
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 1000);
 }

@@ -2,47 +2,71 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inventory System</title>
+  <title>vayapar Saathi</title>
   <link rel="stylesheet" href="styles/global.css">
 </head>
 
 <body>
 
-  <h1 class="logo">Inventory Dashboard</h1>
-  
-  <!-- LANGUAGE -->
-<div class="top-lang">
-  <button id="langBtn">Language</button>
+  <!-- LOGIN PAGE -->
+  <div id="loginPage">
+    <h1 class="logo">Vyapar Saathi</h1>
 
-  <div id="langMenu" class="lang-menu">
-    <p>English</p>
-    <p>Hindi</p>
-    <p>Bengali</p>
-    <p>Telugu</p>
-    <p>Marathi</p>
-    <p>Tamil</p>
-    <p>Gujarati</p>
-    <p>Kannada</p>
-    <p>Malayalam</p>
-    <p>Punjabi</p>
+    <h2>Login</h2>
+
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+
+    <button id="loginBtn">Login</button>
+    <button id="signupBtn">Signup</button>
   </div>
+
+
+  <!-- PURE APP -->
+  <div id="app" style="display: none;">
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <h1 class="logo">VYAPAR SAATHI</h1>
+
+      <div class="top-lang">
+        <button id="langBtn">Language</button>
+
+        <div id="langMenu" class="lang-menu">
+          <p>English</p>
+          <p>Hindi</p>
+          <p>Bengali</p>
+          <p>Telugu</p>
+          <p>Marathi</p>
+          <p>Tamil</p>
+          <p>Gujarati</p>
+          <p>Kannada</p>
+          <p>Malayalam</p>
+          <p>Punjabi</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <div id="navbar">
+      <button id="navDashboard">Dashboard</button>
+      <button id="navStocks">Stocks</button>
+      <button id="navInsights">Insights</button>
+      <button id="navProfile">Profile</button>
+    </div>
+
+    <hr>
+    
+    <div id="output"></div>
+
+    <div id="reader"></div>
+
+  </div>
+
   <div id="toast"></div>
-</div>
 
-<div id="navbar">
-    <button id="navDashboard">Dashboard</button>
-    <button id="navStocks">Stocks</button>
-    <button id="navInsights">Insights</button>
-    <button id="navProfile">Profile</button>
-</div>
-
-<hr>
-
-<div id="reader"></div>  
-<div id="output"></div>
-
-  <script src="https://unpkg.com/html5-qrcode@2.3.8"></script>
   <script type="module" src="app.js"></script>
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8"></script>
+  
 </body>
 </html>

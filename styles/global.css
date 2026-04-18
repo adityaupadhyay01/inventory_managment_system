@@ -24,7 +24,6 @@ body {
   padding: 16px;
 }
 
-/* FIX OVERFLOW */
 html, body {
   max-width: 100%;
   overflow-x: hidden;
@@ -34,24 +33,22 @@ html, body {
 .logo {
   font-size: 32px;
   font-weight: 700;
-  color: #374151; /* clean premium look */
+  color: #374151;
   margin-bottom: 16px;
 }
 
-/* 🔥 NAVBAR (GLASS) */
+/* 🔥 NAVBAR */
 #navbar {
   display: flex;
   gap: 10px;
   overflow-x: auto;
-
   padding: 10px;
   border-radius: 16px;
 
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255,255,255,0.6);
   backdrop-filter: blur(10px);
 
   box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-
   margin-bottom: 20px;
 }
 
@@ -59,7 +56,7 @@ html, body {
   display: none;
 }
 
-/* 🔥 BUTTON BASE */
+/* 🔥 BUTTON */
 button {
   border: none;
   padding: 10px 14px;
@@ -70,7 +67,6 @@ button {
   font-size: 14px;
 }
 
-/* NAV BUTTON */
 #navbar button {
   background: var(--soft-pink);
 }
@@ -79,41 +75,30 @@ button {
   background: var(--pink);
 }
 
+button:hover {
+  opacity: 0.85;
+}
+
 /* BUTTON COLORS */
 #addBtn { background: var(--pink); }
 #sellBtn { background: var(--green); }
 #showInventoryBtn { background: var(--blue); }
 #expiryBtn { background: var(--soft-pink); }
 
-/* BUTTON HOVER */
-button:hover {
-  opacity: 0.85;
-}
-
-/* 🔥 OUTPUT CARD */
+/* 🔥 OUTPUT */
 #output {
   width: 100%;
   padding: 18px;
-
   background: rgba(255,255,255,0.7);
   backdrop-filter: blur(12px);
-
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 }
 
-/* 🔥 HEADINGS */
-h1 {
-  font-size: 28px;
-}
-
-h2 {
-  margin-bottom: 12px;
-}
-
-p {
-  margin: 6px 0;
-}
+/* 🔥 TEXT */
+h1 { font-size: 28px; }
+h2 { margin-bottom: 12px; }
+p { margin: 6px 0; }
 
 /* 🔥 BUTTON GROUP */
 .btn-group {
@@ -138,7 +123,7 @@ input:focus {
   border-color: #9ca3af;
 }
 
-/* 🔥 INVENTORY CARDS */
+/* 🔥 INVENTORY */
 #stockContent div {
   background: #f9fafb;
   border: 1px solid var(--border);
@@ -154,23 +139,13 @@ hr {
   border-top: 1px solid var(--border);
 }
 
-/* 📱 MOBILE RESPONSIVE */
+/* 📱 MOBILE */
 @media (max-width: 600px) {
-
-  h1 {
-    font-size: 22px;
-  }
-
-  h2 {
-    font-size: 18px;
-  }
+  h1 { font-size: 22px; }
+  h2 { font-size: 18px; }
 
   .btn-group {
     flex-direction: column;
-  }
-
-  .btn-group button {
-    width: 100%;
   }
 
   button {
@@ -178,10 +153,13 @@ hr {
   }
 }
 
-/* LANGUAGE DROPDOWN */
-.lang-dropdown {
-  margin-left: auto;
-  position: relative;
+/* ================= LANGUAGE ================= */
+
+.top-lang {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
 }
 
 #langBtn {
@@ -189,57 +167,12 @@ hr {
   border-radius: 20px;
 }
 
-/* MENU */
-.lang-menu {
-  position: absolute;
-  right: 0;
-  top: 45px;
-
-  background: rgba(255,255,255,0.9);
-  backdrop-filter: blur(10px);
-
-  border-radius: 10px;
-  padding: 10px;
-
-  width: 160px;
-  display: none;
-
-  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-}
-
-/* MENU ITEMS */
-.lang-menu p {
-  padding: 8px;
-  cursor: pointer;
-  border-radius: 6px;
-}
-
-.lang-menu p:hover {
-  background: var(--soft-pink);
-}
-.top-lang {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-
-/* MENU */
-
-.top-lang {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-
-  z-index: 1000;
-}
-
 .lang-menu {
   position: absolute;
   right: 0;
   top: 55px;
 
-  width: 180px; /* 🔥 FIX WIDTH */
-
+  width: 180px;
   background: rgba(255,255,255,0.95);
   backdrop-filter: blur(10px);
 
@@ -247,27 +180,22 @@ hr {
   padding: 8px;
 
   display: none;
-
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-
-  z-index: 1000; /* 🔥 VERY IMPORTANT */
 }
 
 .lang-menu p {
-  margin: 0;
   padding: 10px;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
 }
 
 .lang-menu p:hover {
   background: #f3f4f6;
 }
 
-/*toast*/
+/* 🔔 TOAST */
 #toast {
-  position: absolute;  /* 🔥 change from fixed */
+  position: absolute;
   top: 70px;
   right: 20px;
 
@@ -279,11 +207,66 @@ hr {
 
   opacity: 0;
   transform: translateY(-10px);
-
   transition: 0.3s ease;
 }
 
 #toast.show {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ================= SCANNER ================= */
+
+/* 🔥 HIDE BY DEFAULT */
+#reader {
+  display: none;
+
+  width: 100%;
+  max-width: 300px;
+  margin: 20px auto;
+
+  border-radius: 16px;
+  overflow: hidden;
+
+  background: #000;
+  position: relative;
+}
+
+/* 🎥 CAMERA VIDEO */
+#reader video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* 🔥 REMOVE UGLY DEFAULT UI */
+#reader__dashboard_section,
+#reader__header_message,
+#reader__status_span {
+  display: none !important;
+}
+
+/* ⚠️ KEEP THIS VISIBLE (IMPORTANT FOR DEBUG) */
+#reader__camera_permission_button {
+  display: block !important;
+}
+
+/* 🔥 REMOVE GREY OVERLAY */
+#qr-shaded-region {
+  background: transparent !important;
+}
+
+/* 🔥 CLEAN SCAN BOX */
+#qr-shaded-region > div {
+  border: 2px solid #00ffcc !important;
+  border-radius: 12px !important;
+  box-shadow: 0 0 12px rgba(0,255,200,0.4);
+}
+
+/* 📱 MOBILE */
+@media (max-width: 600px) {
+  #reader {
+    max-width: 240px;
+  }
 }
